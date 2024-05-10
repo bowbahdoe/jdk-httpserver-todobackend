@@ -16,8 +16,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
-import static java.nio.file.Files.delete;
-
 public final class TodoController {
     private final DataSource db;
 

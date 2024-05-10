@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
 
+import static java.nio.file.Files.delete;
+
 public final class TodoController {
     private final DataSource db;
 
@@ -29,37 +31,8 @@ public final class TodoController {
                 .get(Pattern.compile("/(?<id>.+)"), this::getTodo)
                 .patch(Pattern.compile("/(?<id>.+)"), this::patchTodo)
                 .post(Pattern.compile("/"), this::postTodo)
-                .delete(Pattern.compile("/"), this::deleteAllTodos)
-                .delete(Pattern.compile("/(?<id>.+)"), this::deleteTodo);
-    }
-
-    public void deleteAllTodos(HttpExchange exchange) throws IOException {
-        try (var conn = db.getConnection();
-             var stmt = conn.prepareStatement("""
-                     DELETE FROM todo
-                     """)) {
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        HttpExchangeUtils.sendResponse(exchange,200, JsonBody.of(Json.of(List.of())));
-    }
-
-    public void deleteTodo(HttpExchange exchange) throws IOException {
-        var routeParams = RouteParams.get(exchange);
-        var id = Integer.parseInt(routeParams.param("id").orElseThrow());
-        try (var conn = db.getConnection();
-             var stmt = conn.prepareStatement("""
-                     DELETE FROM todo
-                     WHERE id = ?
-                     """)) {
-            stmt.setInt(1, id);
-            stmt.execute();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        HttpExchangeUtils.sendResponse(exchange, 200, JsonBody.of(Json.ofNull()));
+                .delete(Pattern.compile("/(?<id>.+)"), this::deleteTodo)
+                .delete(Pattern.compile("/"), this::deleteAllTodos);
     }
 
     public void getAllTodos(HttpExchange exchange) throws IOException {
@@ -251,5 +224,35 @@ public final class TodoController {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public void deleteAllTodos(HttpExchange exchange) throws IOException {
+        try (var conn = db.getConnection();
+             var stmt = conn.prepareStatement("""
+                     DELETE FROM todo
+                     """)) {
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        HttpExchangeUtils.sendResponse(exchange,200, JsonBody.of(Json.of(List.of())));
+    }
+
+    public void deleteTodo(HttpExchange exchange) throws IOException {
+        var routeParams = RouteParams.get(exchange);
+        var id = Integer.parseInt(routeParams.param("id").orElseThrow());
+        try (var conn = db.getConnection();
+             var stmt = conn.prepareStatement("""
+                     DELETE FROM todo
+                     WHERE id = ?
+                     """)) {
+            stmt.setInt(1, id);
+            stmt.execute();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        HttpExchangeUtils.sendResponse(exchange, 200, JsonBody.of(Json.ofNull()));
     }
 }

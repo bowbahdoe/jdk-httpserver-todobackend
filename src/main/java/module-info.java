@@ -7,5 +7,6 @@ module dev.mccue.todoapp {
     requires dev.mccue.jdk.httpserver.regexrouter;
     requires dev.mccue.json;
 
+    requires org.eclipse.jetty.http.spi;
     exports dev.mccue.todoapp;
 }

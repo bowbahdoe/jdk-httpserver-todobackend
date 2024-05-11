@@ -9,6 +9,7 @@ import org.sqlite.SQLiteDataSource;
 
 import javax.sql.DataSource;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
 
 public final class Main {
     static DataSource db() throws Exception {
@@ -59,6 +60,7 @@ public final class Main {
                 new CorsFilter()
         );
 
+        // server.setExecutor(Executors.newVirtualThreadPerTaskExecutor());
         server.start();
     }
 }

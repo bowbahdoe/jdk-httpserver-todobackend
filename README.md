@@ -1,4 +1,4 @@
-# Microhttp Todo Backend
+# JDK Todo Backend
 
 This is an implementation of [https://todobackend.com/](https://todobackend.com/) written using
 
